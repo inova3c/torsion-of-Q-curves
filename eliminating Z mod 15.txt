@@ -1,0 +1,100 @@
+R:=Integers(15);
+G:=GL(2,R);
+
+// first curve: 1600.i1
+//mod 15 image generators
+a:=Matrix(R,2,2,[11,0,10,1]);
+b:=Matrix(R,2,2,[1,12,0,1]);
+c:=Matrix(R,2,2,[2,0,0,11]);
+d:=Matrix(R,2,2,[14,0,0,14]);
+e:=Matrix(R,2,2,[11,5,10,6]);
+f:=Matrix(R,2,2,[1,6,0,1]);
+L:=[a,b,c,d,e,f];
+
+H1:=sub<G|L>;
+o:=Order(H1);
+
+LL:=AllSubgroups(H1);
+list3:=[* *];
+for S in LL do
+	if (Order(S)*3 eq o) then Append(~list3, S); end if;
+	if (Order(S) eq o) then Append(~list3, S); end if;
+end for;
+list3;
+
+//list3 contains all possible mod 15 images of G_K for K a cubic field
+//we want to see whether we can twist any of these images to get the special shape mod 5 and mod 3
+//we first look mod 5 and calculate what the twists of generators are
+//we then check whether it works mod 3
+//it turns out that the mod 5 image is uniquely determined, and that the mod 3 image doesn't work in any of the 4 cases
+
+//second curve: 1600.i2
+//mod 15 image generators
+a:=Matrix(R,2,2,[6,10,10,6]);
+b:=Matrix(R,2,2,[1,12,0,1]);
+c:=Matrix(R,2,2,[2,0,0,11]);
+d:=Matrix(R,2,2,[14,0,0,14]);
+e:=Matrix(R,2,2,[11,5,10,6]);
+f:=Matrix(R,2,2,[1,6,0,1]);
+L:=[a,b,c,d,e,f];
+
+H2:=sub<G|L>;
+o:=Order(H2);
+
+LL:=AllSubgroups(H2);
+list3:=[* *];
+for S in LL do
+	if (Order(S)*3 eq o) then Append(~list3, S); end if;
+	if (Order(S) eq o) then Append(~list3, S); end if;
+end for;
+list3;
+
+//it turns out in this case we can be quick, each of the 4 subgroups
+//contains either [2,0,0,11] or [2,9,0,11] which cannot be well-twisted both mod 3 and mod 5
+
+//third curve: 1600.i3
+//mod 15 image generators
+a:=Matrix(R,2,2,[6,10,10,6]);
+b:=Matrix(R,2,2,[1,12,0,1]);
+c:=Matrix(R,2,2,[6,5,10,7]);
+d:=Matrix(R,2,2,[14,0,0,14]);
+e:=Matrix(R,2,2,[11,5,10,6]);
+f:=Matrix(R,2,2,[1,6,0,1]);
+L:=[a,b,c,d,e,f];
+
+H3:=sub<G|L>;
+o:=Order(H3);
+
+LL:=AllSubgroups(H3);
+list3:=[* *];
+for S in LL do
+	if (Order(S)*3 eq o) then Append(~list3, S); end if;
+	if (Order(S) eq o) then Append(~list3, S); end if;
+end for;
+list3;
+
+//again, each of the 4 subgroups contains a matrix of the form [11, *, 0, 2] 
+//which cannot be twisted mod 3 and mod 5 to work
+
+//fourth curve: 1600.i4
+//mod 15 image generators
+a:=Matrix(R,2,2,[1,0,10,1]);
+b:=Matrix(R,2,2,[1,12,0,1]);
+c:=Matrix(R,2,2,[6,5,10,7]);
+d:=Matrix(R,2,2,[14,0,0,14]);
+e:=Matrix(R,2,2,[11,5,10,6]);
+f:=Matrix(R,2,2,[1,6,0,1]);
+L:=[a,b,c,d,e,f];
+
+H4:=sub<G|L>;
+o:=Order(H3);
+
+LL:=AllSubgroups(H4);
+list3:=[* *];
+for S in LL do
+	if (Order(S)*3 eq o) then Append(~list3, S); end if;
+	if (Order(S) eq o) then Append(~list3, S); end if;
+end for;
+list3;
+
+//this time we have [11,0,0,11] in all subgroups and we're done

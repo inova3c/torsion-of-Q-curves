@@ -1,0 +1,54 @@
+//there is a 5-isogeny and the 2-adic image is a specific one, H_2 per Rouse and Zureick Brown
+_<t>:=RationalFunctionField(Rationals());
+
+//form of j-invariant giving B(5) as image of Galois
+f1 := (t^2+10*t+5)^3/t;
+
+//form of j-invariant allowing curve X_2 as per Rouse for mod 2 image
+f2 := t^2+1728;
+
+R<x,y> := PolynomialRing(Rationals(), 2);
+C := ProjectiveClosure(Curve(AffineSpace(R),Numerator(Evaluate(f1,x)-Evaluate(f2,y))));
+
+"We need to find rational points on C:";
+C;
+"";
+
+"Genus is:", Genus(C);
+
+pts:=PointSearch(C, 10);
+
+pts;
+
+
+E, mp := EllipticCurve(C, pts[1]);
+E;
+
+Rank(E);
+//0 true
+
+TorsionSubgroup(E);
+
+
+G, mE:=TorsionSubgroup(E);
+//G is isomorphic to Z/2Z
+
+ptsE:={@@};
+
+for i in [1..2] do
+    ptsE := ptsE join {mE(i*G.1)};
+end for;
+
+ptsC := {@@};
+
+for i in [1..2] do
+    ptsC := ptsC join Points(ptsE[i]@@mp);
+end for;
+
+ptsC;
+
+
+//no notrivial points on C, we are done
+
+
+

@@ -1,0 +1,227 @@
+//this is the transposed case alpha=10
+//note: we could only argue with the alpha=2 case, but we also run this code for sanity check
+
+G := GL(2, Integers(20));
+J := sub<G | [[1, 2, 10, 3], [1, 2, 10, 1], [-1, 2, 10, 7], [-1, 0, 0, -1], [-1, 0, 0, 1], [1, 0, 10, 3], [11,0,0,11], [11,0,0,1]]>;
+//here is the only difference between this code and the old one, the group J is replaced by its transpose
+#J;
+
+//J is the maximal mod 20 image
+
+UnitsZ20 := { x : x in [1..19] | GCD(x, 20) eq 1 };
+
+
+A := Subgroups(J);
+#A;
+//10552
+
+Ad:=[];
+
+for T in A do
+	Determinants := {};
+	for g in T`subgroup do
+    		det_g := Determinant(g);  // Compute the determinant of the element
+    		Include(~Determinants, det_g);  // Add the determinant to the set
+	end for;
+	if Determinants eq UnitsZ20 then
+    		Append(~Ad, T);
+	end if;
+end for;
+
+
+
+#Ad;
+// 3674
+
+//Ad are all subgroups of J whose determinant is surjective
+
+AA:=[];
+minus_id:=G![-1, 0, 0, -1];
+for T in Ad do
+	if minus_id in T`subgroup then
+		Append(~AA, T);
+	end if;
+end for;
+
+#AA;
+//410
+
+B := Subgroups(G);
+#B;
+
+//20933
+
+Bs:=[];
+for T in B do
+	if minus_id in T`subgroup then
+		Append(~Bs, T);
+	end if;
+end for;
+
+#Bs;
+//6793
+//all subgroups containing -I
+
+// List to store subgroups of G whose order is divisible by 3
+B1 := [];
+
+// Iterate over all subgroups of G
+for T in Bs do
+    order := T`order;  
+    if order mod 3 eq 0 then
+        Append(~B1, T);
+    end if;
+end for;
+
+#B1;
+//2779
+
+//B1 are all subgroups of G whose order is divisible by 3, which contain -I
+
+Bd:=[];
+
+for T in B1 do
+	Determinants := {};
+	for g in T`subgroup do
+    		det_g := Determinant(g);  // Compute the determinant of the element
+    		Include(~Determinants, det_g);  // Add the determinant to the set
+	end for;
+	if Determinants eq UnitsZ20 then
+    		Append(~Bd, T);
+	end if;
+end for;
+
+#Bd;
+//699
+
+//Bd are those with the full determinant
+
+B2:=[];
+Q:=GL(2, Integers(5));
+Borel:=sub<Q| [ [1, 1, 0, 1], [2, 0, 0, 1], [1,0,0,2]] >;
+#Borel;
+
+
+
+for T in Bd do
+	T5:=ChangeRing(T`subgroup, Integers(5));
+	if IsConjugateSubgroup(Q, Borel, T5) then
+		Append(~B2, T);		
+	end if;
+end for;
+
+#B2;
+//116
+
+
+BB:=B2;
+
+#BB;
+
+//BB are all subgroups of G whose order is divisible by 3 and who are mod 5 conjugate to a subgroup of B(5)
+
+
+load "gl2data.txt";
+G2 := GL(2, Integers(2));
+G4 := GL(2, Integers(4));
+phi := map<G4 -> G2 | x :-> G2![Integers(2)!x[1][1], Integers(2)!x[1][2], Integers(2)!x[2][1], Integers(2)!x[2][2]]>;
+
+
+mod4list:=[* *];
+
+for j:=1 to 727 do
+	if newsublist[j][2] gt 2 then
+		temp:=ChangeRing(newsublist[j][3], Integers(4));
+	end if;
+	if newsublist[j][2] eq 2 then
+		temp:=sub<G4 | {x: x in G4 | phi(x) in newsublist[j][3]}>;
+	end if;
+	Append(~mod4list, temp);
+end for;
+
+#mod4list;
+//727 of course
+
+
+
+//idea: filter BB by looking at them mod 4 and seeing if they can be a Galois image
+
+//for every matrix in BB, look at it mod 4, and look if it is conjugate to a subgroup of a group in mod4list;
+
+BBX:=[* *];
+x:=0;
+for T in BB do
+	temp:=ChangeRing(T`subgroup, Integers(4));
+	for S in mod4list do
+		 if IsConjugateSubgroup(G4, S, temp) then
+                    Append(~BBX, T);
+		    break;
+                 end if;
+	end for;
+	x:=x+1;
+	x;
+end for;
+
+
+#BBX;
+//116
+
+BBF:=[* *];
+
+for T in BBX do
+    order := T`order;  
+    if order mod 9 ne 0 then
+        Append(~BBF, T);
+    end if;
+end for;
+
+#BBF;
+
+
+A1:=[];
+
+x:=0;
+
+for T in BBF do
+	for U in AA do
+	S:=U`subgroup;
+        if 3 * #S eq T`order then
+            if IsConjugateSubgroup(G, T`subgroup, S) then
+               Append(~A1, T); 
+		print "***";
+		break;
+            end if;
+        end if;
+    	end for;
+	x:=x+1;
+	x;
+end for;
+
+#A1;
+
+//12 groups
+
+for i in [1..11] do
+	IsConjugateSubgroup(G, A1[12]`subgroup, A1[i]`subgroup);
+end for;
+
+//all groups on the list are conjugate to a subgroup of A1[12]
+
+theG:=A1[12]`subgroup;
+
+theGmod4:=ChangeRing(theG, Integers(4));
+
+
+
+for j:=1 to 727 do
+	temp:=mod4list[j];
+	if IsConjugateSubgroup(G4, theGmod4, temp) then
+		if #theGmod4 eq #temp then 
+			print j;
+		end if;
+	end if;
+end for;
+
+//the 2-adic image is defined mod 2, and it is cyclic of order 3 modulo 2 (the discriminant is a square)
+//the mod 5 image is an index 2 subgroup of the Borel, with the only restriction that the top left element is pm1 mod 5
+
