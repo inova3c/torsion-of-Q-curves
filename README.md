@@ -1,3 +1,12 @@
-The file "gl2data" is a list of all possible 2-adic Galois representations, due to Zureick and Brown. 
 
-The other files are Magma codes which were used to rule out Z/15Z and Z/2Z X Z/10Z as possible torsion subgroups of Q-curves over cubic number fields.
+This repository contains Magma code related to the computations in the paper:
+
+Torsion of $\Q$-curves over number fields of small odd prime degree
+todo: arxiv link
+
+The version of Magma that was used is V2.28-3
+
+
+The file "gl2data" is a list of all possible 2-adic Galois representations, due to Zureick and Brown. This file is needed to run some of the code. 
+
+For each of the files, the square brackets contain the result from the paper which uses it.
