@@ -2,6 +2,7 @@
 This repository contains Magma code related to the computations in the paper:
 
 Torsion of $\Q$-curves over number fields of small odd prime degree
+
 todo: arxiv link
 
 The version of Magma that was used is V2.28-3
